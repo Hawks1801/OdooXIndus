@@ -50,16 +50,6 @@ const PRODUCT_ITEMS: NavItem[] = [
     label: "Stock Availability",
     icon: Warehouse,
   },
-  {
-    href: "/admin/categories",
-    label: "Product Categories",
-    icon: ListTree,
-  },
-  {
-    href: "/admin/reordering-rules",
-    label: "Reordering Rules",
-    icon: AlertTriangle,
-  },
 ];
 
 const OPERATION_ITEMS: NavItem[] = [

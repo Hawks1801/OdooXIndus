@@ -245,28 +245,6 @@ export function createProductColumns(
       );
     },
   },
-  {
-    accessorKey: "category",
-    header: "Category",
-    cell: ({ row }) => {
-      const product = row.original;
-      const categoryName =
-        typeof product.category === "object" && product.category
-          ? product.category.name
-          : (product.category as string | undefined) || "Unknown";
-      if (product.categoryId) {
-        return (
-          <Link
-            href={detailHref(detailBase, "categories", product.categoryId)}
-            className="font-semibold text-sky-600 dark:text-sky-400 hover:text-sky-500 dark:hover:text-sky-300"
-          >
-            {categoryName}
-          </Link>
-        );
-      }
-      return <span>{categoryName}</span>;
-    },
-  },
   ...(forSupplier
     ? [
         {

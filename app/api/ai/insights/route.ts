@@ -8,7 +8,7 @@ import { getSessionFromRequest } from "@/utils/auth";
 import { createChatCompletion, isOpenRouterConfigured } from "@/lib/ai";
 import { successResponse, errorResponse } from "@/lib/api/response-helpers";
 
-const SYSTEM_PROMPT = `You are a concise inventory advisor. Given a short summary of inventory metrics, reply with 2-4 brief, actionable recommendations (one short sentence each). Focus on reorder suggestions, low-stock attention, and value optimization. Keep the tone professional and direct. Do not use markdown or bullet symbols.`;
+const SYSTEM_PROMPT = `You are a concise inventory advisor. Given a short summary of inventory metrics, reply with 2-4 brief, actionable recommendations (one short sentence each). Focus on low-stock attention and value optimization. Keep the tone professional and direct. Do not use markdown or bullet symbols.`;
 
 export async function POST(request: NextRequest) {
   try {

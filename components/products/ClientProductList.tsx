@@ -121,17 +121,6 @@ export default function ClientProductList({
           ]}
         />
         <StatisticsCard
-          title="Categories"
-          value={stats.categories.total}
-          description="Total categories"
-          icon={FolderTree}
-          variant="amber"
-          badges={[
-            { label: "Active", value: stats.categories.active },
-            { label: "Inactive", value: stats.categories.inactive },
-          ]}
-        />
-        <StatisticsCard
           title="Warehouses"
           value={stats.warehouses.total}
           description="Storage locations"

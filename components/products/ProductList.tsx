@@ -443,23 +443,6 @@ const ProductList = React.memo(() => {
                   },
                 ]}
               />
-              <StatisticsCard
-                title="Categories"
-                value={dashboard.counts.categories}
-                description="Product categories"
-                icon={FolderTree}
-                variant="amber"
-                badges={[
-                  {
-                    label: "Active",
-                    value: dashboard.categoryStatusBreakdown?.active ?? 0,
-                  },
-                  {
-                    label: "Inactive",
-                    value: dashboard.categoryStatusBreakdown?.inactive ?? 0,
-                  },
-                ]}
-              />
             </>
           ) : null}
         </div>
@@ -556,25 +539,6 @@ const ProductList = React.memo(() => {
                     label: "Inactive",
                     value:
                       productsPageStats.supplierStatusBreakdown?.inactive ?? 0,
-                  },
-                ]}
-              />
-              <StatisticsCard
-                title="Categories"
-                value={productsPageStats.counts.categories}
-                description="Product categories"
-                icon={FolderTree}
-                variant="amber"
-                badges={[
-                  {
-                    label: "Active",
-                    value:
-                      productsPageStats.categoryStatusBreakdown?.active ?? 0,
-                  },
-                  {
-                    label: "Inactive",
-                    value:
-                      productsPageStats.categoryStatusBreakdown?.inactive ?? 0,
                   },
                 ]}
               />

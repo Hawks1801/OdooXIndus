@@ -17,8 +17,6 @@ export async function GET(request: NextRequest) {
       ...order,
       createdAt: order.createdAt.toISOString(),
       updatedAt: order.updatedAt?.toISOString() || null,
-      shippingAddress: order.shippingAddress ? JSON.parse(order.shippingAddress) : null,
-      billingAddress: order.billingAddress ? JSON.parse(order.billingAddress) : null,
       items: order.items.map((item: any) => ({
         ...item,
         createdAt: item.createdAt.toISOString(),

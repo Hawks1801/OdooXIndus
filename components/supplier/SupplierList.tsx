@@ -215,25 +215,6 @@ const SupplierList = React.memo(() => {
                   },
                 ]}
               />
-              <StatisticsCard
-                title="Categories"
-                value={suppliersPageStats.counts.categories}
-                description="Product categories"
-                icon={FolderTree}
-                variant="amber"
-                badges={[
-                  {
-                    label: "Active",
-                    value:
-                      suppliersPageStats.categoryStatusBreakdown?.active ?? 0,
-                  },
-                  {
-                    label: "Inactive",
-                    value:
-                      suppliersPageStats.categoryStatusBreakdown?.inactive ?? 0,
-                  },
-                ]}
-              />
             </>
           ) : null}
         </div>

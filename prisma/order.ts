@@ -114,10 +114,14 @@ export async function createOrder(data: CreateOrderInput, userId: string) {
       discount: discount > 0 ? discount : null,
       total,
       shippingAddress: data.shippingAddress
-        ? JSON.stringify(data.shippingAddress)
+        ? (JSON.parse(
+            JSON.stringify(data.shippingAddress),
+          ) as Prisma.InputJsonValue)
         : null,
       billingAddress: data.billingAddress
-        ? JSON.stringify(data.billingAddress)
+        ? (JSON.parse(
+            JSON.stringify(data.billingAddress),
+          ) as Prisma.InputJsonValue)
         : null,
       notes: data.notes || null,
       createdBy: userId,
@@ -493,9 +497,13 @@ export async function updateOrder(
   if (data.status) updateData.status = data.status;
   if (data.paymentStatus) updateData.paymentStatus = data.paymentStatus;
   if (data.shippingAddress)
-    updateData.shippingAddress = JSON.stringify(data.shippingAddress);
+    updateData.shippingAddress = JSON.parse(
+      JSON.stringify(data.shippingAddress),
+    ) as Prisma.InputJsonValue;
   if (data.billingAddress)
-    updateData.billingAddress = JSON.stringify(data.billingAddress);
+    updateData.billingAddress = JSON.parse(
+      JSON.stringify(data.billingAddress),
+    ) as Prisma.InputJsonValue;
   if (data.trackingNumber) updateData.trackingNumber = data.trackingNumber;
   if (data.trackingUrl) updateData.trackingUrl = data.trackingUrl;
   if (data.estimatedDelivery)

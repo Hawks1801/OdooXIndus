@@ -84,7 +84,7 @@ export default function AdminAnalyticsContent({
     const r = stats.revenue ?? {};
     const totalRev = (r.fromOrders ?? 0) + (r.fromInvoices ?? 0);
     const parts = [
-      `Products: ${c.products ?? 0}. Users: ${c.users ?? 0}. Suppliers: ${c.suppliers ?? 0}. Categories: ${c.categories ?? 0}.`,
+      `Products: ${c.products ?? 0}. Users: ${c.users ?? 0}. Suppliers: ${c.suppliers ?? 0}.`,
       `Orders: ${c.orders ?? 0}. Invoices: ${c.invoices ?? 0}. Warehouses: ${c.warehouses ?? 0}.`,
       `Support tickets: ${c.tickets ?? 0}. Product reviews: ${c.reviews ?? 0}.`,
       `Total revenue (orders + invoices): $${(totalRev ?? 0).toLocaleString()}.`,
@@ -164,7 +164,7 @@ export default function AdminAnalyticsContent({
           </h1>
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             Overview, statistics, trends, and AI-powered insights across
-            products, users, suppliers, categories, orders, invoices,
+            products, users, suppliers, orders, invoices,
             warehouses, tickets, and reviews. Store-wide metrics.
           </p>
         </div>

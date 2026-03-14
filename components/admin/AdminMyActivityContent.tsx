@@ -425,17 +425,6 @@ export default function AdminMyActivityContent() {
                 ]}
               />
               <StatisticsCard
-                title="Categories"
-                value={stats.totalCategories}
-                description="Product categories"
-                icon={FolderTree}
-                variant="sky"
-                badges={[
-                  { label: "Active", value: stats.categoryActive },
-                  { label: "Inactive", value: stats.categoryInactive },
-                ]}
-              />
-              <StatisticsCard
                 title="Average Order Value"
                 value={formatCurrency(stats.avgOrderValue)}
                 description="Per order average (self)"

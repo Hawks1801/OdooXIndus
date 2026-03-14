@@ -55,7 +55,7 @@ export function StatisticsSection() {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
       {isLoading ? (
         <>
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+          {[1, 2, 3, 4, 5, 6, 7].map((i) => (
             <StatisticsCardSkeleton key={i} />
           ))}
         </>
@@ -218,17 +218,6 @@ export function StatisticsSection() {
             badges={[
               { label: "Active", value: stats.supplierStatusBreakdown?.active ?? 0 },
               { label: "Inactive", value: stats.supplierStatusBreakdown?.inactive ?? 0 },
-            ]}
-          />
-          <StatisticsCard
-            title="Categories"
-            value={stats.counts?.categories}
-            description="Product categories"
-            icon={FolderTree}
-            variant="amber"
-            badges={[
-              { label: "Active", value: stats.categoryStatusBreakdown?.active ?? 0 },
-              { label: "Inactive", value: stats.categoryStatusBreakdown?.inactive ?? 0 },
             ]}
           />
         </>

@@ -294,11 +294,6 @@ export default function FiltersAndActions({
             setSelectedSuppliers={setSelectedSuppliers}
             suppliersOverride={suppliersOverride}
           />
-          <CategoryDropDown
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-            categoriesOverride={categoriesOverride}
-          />
         </div>
 
         {/* Center - Search */}
@@ -429,39 +424,6 @@ function FilterArea({
         </div>
       )}
 
-      {/* Category Filter */}
-      {selectedCategories.length > 0 && (
-        <div className="inline-flex items-center gap-1 px-2 py-1 text-xs border text-gray-700 dark:text-white rounded-md backdrop-blur-sm ">
-          <span className="text-gray-700 dark:text-white/80">Category:</span>
-          <div className="flex gap-1 items-center">
-            {selectedCategories.length < 3 ? (
-              selectedCategories.map((categoryId, index) => {
-                const category = allCategories.find((c) => c.id === categoryId);
-                return (
-                  <Badge
-                    key={index}
-                    className="border text-white backdrop-blur-sm"
-                  >
-                    {category?.name || categoryId}
-                  </Badge>
-                );
-              })
-            ) : (
-              <Badge className="border text-gray-700 dark:text-white backdrop-blur-sm">
-                {selectedCategories.length} Selected
-              </Badge>
-            )}
-          </div>
-          <button
-            aria-label="Clear category filter"
-            onClick={() => setSelectedCategories([])}
-            className="ml-1 hover:text-gray-700 dark:hover:text-white/80 transition-colors"
-          >
-            <IoClose className="h-3 w-3 text-gray-700 dark:text-white" />
-          </button>
-        </div>
-      )}
-
       {/* Supplier Filter */}
       {selectedSuppliers.length > 0 && (
         <div className="inline-flex items-center gap-1 px-2 py-1 text-xs border text-gray-700 dark:text-white rounded-md backdrop-blur-sm ">
@@ -502,7 +464,6 @@ function FilterArea({
         <Button
           onClick={() => {
             setSelectedStatuses([]);
-            setSelectedCategories([]);
             setSelectedSuppliers([]);
           }}
           variant={"ghost"}

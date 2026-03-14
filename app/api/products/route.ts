@@ -195,10 +195,10 @@ export async function POST(request: NextRequest) {
       initialStock,
     } = body;
 
-    // Validate required fields
-    if (!name || !sku || price === undefined || quantity === undefined || !categoryId || !supplierId) {
+    // Validate required fields (categoryId is now handled automatically if missing)
+    if (!name || !sku || price === undefined || quantity === undefined || !supplierId) {
       return NextResponse.json(
-        { error: "Missing required fields: Category and Supplier must be selected" },
+        { error: "Missing required fields: Name, SKU, Price, Quantity, and Supplier must be provided" },
         { status: 400 },
       );
     }
@@ -215,16 +215,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fetch category and supplier data for the response and foreign key validation
-    const category = await prisma.category.findUnique({
-      where: { id: categoryId },
-    });
-    
-    if (!category) {
-      return NextResponse.json(
-        { error: "Selected Category does not exist." },
-        { status: 400 },
-      );
+    // Handle Category: Use provided categoryId or find/create "General"
+    let effectiveCategoryId = categoryId;
+    let category;
+
+    if (effectiveCategoryId) {
+      category = await prisma.category.findUnique({
+        where: { id: effectiveCategoryId },
+      });
+      if (!category) {
+        return NextResponse.json(
+          { error: "Selected Category does not exist." },
+          { status: 400 },
+        );
+      }
+    } else {
+      // Find or create "General" category for this user
+      category = await prisma.category.findFirst({
+        where: { name: "General", userId },
+      });
+      if (!category) {
+        category = await prisma.category.create({
+          data: {
+            name: "General",
+            userId,
+            description: "Default category",
+            status: true,
+            createdBy: userId,
+          },
+        });
+      }
+      effectiveCategoryId = category.id;
     }
     
     const supplier = await prisma.supplier.findUnique({
@@ -248,7 +269,7 @@ export async function POST(request: NextRequest) {
         status,
         userId,
         createdBy: userId,
-        categoryId,
+        categoryId: effectiveCategoryId,
         supplierId,
         imageUrl: imageUrl || null,
         imageFileId: imageFileId || null,
@@ -430,6 +451,27 @@ export async function PUT(request: NextRequest) {
       });
     }
 
+    // Handle Category update if needed
+    let effectiveCategoryId = categoryId;
+    if (effectiveCategoryId === "") {
+        // Find or create "General" category for this user
+        let category = await prisma.category.findFirst({
+          where: { name: "General", userId },
+        });
+        if (!category) {
+          category = await prisma.category.create({
+            data: {
+              name: "General",
+              userId,
+              description: "Default category",
+              status: true,
+              createdBy: userId,
+            },
+          });
+        }
+        effectiveCategoryId = category.id;
+    }
+
     // Update product with audit fields
     const product = await prisma.product.update({
       where: { id },
@@ -439,7 +481,7 @@ export async function PUT(request: NextRequest) {
         ...(price !== undefined && { price }),
         ...(quantity !== undefined && { quantity }),
         ...(status && { status }),
-        ...(categoryId && { categoryId }),
+        ...(effectiveCategoryId && { categoryId: effectiveCategoryId }),
         ...(supplierId && { supplierId }),
         ...(imageUrl !== undefined && {
           imageUrl: imageUrl === "" ? null : imageUrl,

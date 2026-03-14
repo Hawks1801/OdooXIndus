@@ -70,7 +70,6 @@ export default function AddProductDialog({
 
   const { reset } = methods;
 
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedSupplier, setSelectedSupplier] = useState<string>("");
   const dialogCloseRef = useRef<HTMLButtonElement | null>(null);
 
@@ -83,14 +82,8 @@ export default function AddProductDialog({
   } = useProductStore();
 
   // Use TanStack Query for data fetching
-  const { data: categories = [] } = useCategories();
   const { data: suppliers = [] } = useSuppliers();
 
-  // Filter to only show active categories and suppliers in dropdowns
-  // Include currently selected category/supplier even if inactive (for edit mode)
-  const activeCategories = categories.filter(
-    (category) => category.status !== false || category.id === selectedCategory
-  );
   const activeSuppliers = suppliers.filter(
     (supplier) => supplier.status !== false || supplier.id === selectedSupplier
   );
@@ -114,7 +107,6 @@ export default function AddProductDialog({
         unitOfMeasure: (selectedProduct as any).unitOfMeasure || "pcs",
         initialStock: (selectedProduct as any).initialStock || 0,
       });
-      setSelectedCategory(selectedProduct.categoryId || "");
       setSelectedSupplier(selectedProduct.supplierId || "");
     } else {
       // Reset form to default values for adding a new product
@@ -129,7 +121,6 @@ export default function AddProductDialog({
         unitOfMeasure: "pcs",
         initialStock: "" as unknown as number,
       });
-      setSelectedCategory("");
       setSelectedSupplier("");
     }
   }, [selectedProduct, openProductDialog, reset]);
@@ -167,7 +158,6 @@ export default function AddProductDialog({
           price: price,
           quantity: quantity,
           status,
-          categoryId: selectedCategory,
           supplierId: selectedSupplier,
           userId: userId,
           imageUrl: data.imageUrl || undefined,
@@ -189,7 +179,6 @@ export default function AddProductDialog({
           price: price,
           quantity: quantity,
           status,
-          categoryId: selectedCategory,
           supplierId: selectedSupplier,
           imageUrl: data.imageUrl || undefined,
           imageFileId: data.imageFileId || undefined,
@@ -209,7 +198,7 @@ export default function AddProductDialog({
 
   // Determine if form is submitting based on mutation states
   const isSubmitting = createProductMutation.isPending || updateProductMutation.isPending;
-  const isFormValid = selectedCategory && selectedSupplier;
+  const isFormValid = selectedSupplier;
 
   const handleOpenChange = (open: boolean) => {
     if (open) {
@@ -277,35 +266,6 @@ export default function AddProductDialog({
               )}
               <ExpirationDateField />
               <ImageField />
-              <div className="mt-5 flex flex-col gap-2">
-                <label className="text-sm font-medium text-white/80">
-                  Category
-                </label>
-                <Select
-                  value={selectedCategory || undefined}
-                  onValueChange={(value) => setSelectedCategory(value)}
-                >
-                  <SelectTrigger className="h-11 w-full dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:ring-rose-500/50 ">
-                    <SelectValue placeholder="Select Category" />
-                  </SelectTrigger>
-                  <SelectContent
-                    className="dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
-                    position="popper"
-                    sideOffset={5}
-                    align="start"
-                  >
-                    {activeCategories.map((category) => (
-                      <SelectItem
-                        key={category.id}
-                        value={category.id}
-                        className="cursor-pointer text-gray-900 dark:text-white focus:bg-rose-100 dark:focus:bg-white/10 focus:text-gray-900 dark:focus:text-white"
-                      >
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
               <div className="mt-5 flex flex-col gap-2">
                 <label className="text-sm font-medium text-white/80">
                   Supplier
