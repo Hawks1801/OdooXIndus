@@ -47,7 +47,8 @@ import { format } from "date-fns";
 import type { DashboardStats } from "@/types";
 import ForecastingSection from "@/components/admin/ForecastingSection";
 
-function formatCurrency(value: number): string {
+function formatCurrency(value: number | undefined | null): string {
+  if (value === undefined || value === null) return "$0.00";
   return `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
@@ -86,12 +87,12 @@ export default function AdminAnalyticsContent({
       `Products: ${c.products ?? 0}. Users: ${c.users ?? 0}. Suppliers: ${c.suppliers ?? 0}. Categories: ${c.categories ?? 0}.`,
       `Orders: ${c.orders ?? 0}. Invoices: ${c.invoices ?? 0}. Warehouses: ${c.warehouses ?? 0}.`,
       `Support tickets: ${c.tickets ?? 0}. Product reviews: ${c.reviews ?? 0}.`,
-      `Total revenue (orders + invoices): $${totalRev.toLocaleString()}.`,
+      `Total revenue (orders + invoices): $${(totalRev ?? 0).toLocaleString()}.`,
     ];
     const last = stats.trends?.[stats.trends.length - 1];
     if (last) {
       parts.push(
-        `Last month trend: ${last.orders} orders, $${last.revenue.toLocaleString()} revenue, ${last.products} new products, ${last.invoices} invoices.`,
+        `Last month trend: ${last.orders ?? 0} orders, $${(last.revenue ?? 0).toLocaleString()} revenue, ${last.products ?? 0} new products, ${last.invoices ?? 0} invoices.`,
       );
     }
     return parts.join(" ");
