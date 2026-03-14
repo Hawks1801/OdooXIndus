@@ -30,15 +30,19 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id } = await params;
+    const { id: invoiceId } = await params;
 
     // Fetch invoice with order and items
-    const invoice = await prisma.invoice.findFirst({
-      where: { id, userId: session.id },
+    const invoice = await prisma.invoice.findUnique({
+      where: { id: invoiceId },
       include: {
         order: {
           include: {
-            items: true,
+            items: {
+              include: {
+                product: { select: { userId: true } },
+              },
+            },
           },
         },
       },
@@ -46,6 +50,18 @@ export async function GET(
 
     if (!invoice) {
       return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
+    }
+
+    // Permission check: admin, issuer, customer, or product owner
+    const isAdmin = session.role === "admin";
+    const isIssuer = invoice.userId === session.id;
+    const isCustomer = invoice.clientId === session.id;
+    const isProductOwner = invoice.order?.items.some(
+      (item) => item.product.userId === session.id
+    );
+
+    if (!isAdmin && !isIssuer && !isCustomer && !isProductOwner) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Get client info if available
@@ -73,14 +89,9 @@ export async function GET(
       amountPaid: invoice.amountPaid,
       amountDue: invoice.amountDue,
       clientName,
-      billingAddress: invoice.billingAddress as {
-        name?: string;
-        street?: string;
-        city?: string;
-        state?: string;
-        zipCode?: string;
-        country?: string;
-      } | null,
+      billingAddress: invoice.billingAddress 
+        ? JSON.parse(invoice.billingAddress as string)
+        : null,
       items:
         invoice.order?.items.map((item) => ({
           productName: item.productName,

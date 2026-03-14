@@ -23,12 +23,18 @@ export async function GET(request: NextRequest) {
       userId: invoice.userId,
       clientId: invoice.clientId,
       status: invoice.status,
+      subtotal: invoice.subtotal,
+      tax: invoice.tax,
+      shipping: invoice.shipping,
+      discount: invoice.discount,
       total: invoice.total,
       amountPaid: invoice.amountPaid,
       amountDue: invoice.amountDue,
       dueDate: invoice.dueDate.toISOString(),
       issuedAt: invoice.issuedAt.toISOString(),
       createdAt: invoice.createdAt.toISOString(),
+      billingAddress: invoice.billingAddress ? JSON.parse(invoice.billingAddress as string) : null,
+      shippingAddress: invoice.shippingAddress ? JSON.parse(invoice.shippingAddress as string) : null,
     }));
 
     return NextResponse.json(transformedInvoices);
