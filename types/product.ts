@@ -75,6 +75,8 @@ export interface CreateProductInput {
   imageUrl?: string;
   imageFileId?: string;
   expirationDate?: string; // ISO date string
+  unitOfMeasure?: string;
+  initialStock?: number;
 }
 
 /**
@@ -92,4 +94,5 @@ export interface UpdateProductInput {
   imageUrl?: string;
   imageFileId?: string;
   expirationDate?: string | null; // ISO date string or null to clear
+  unitOfMeasure?: string;
 }

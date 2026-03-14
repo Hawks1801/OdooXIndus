@@ -144,7 +144,7 @@ const PROTECTED_EMAILS = [
 ];
 
 function getDisplayUsername(u: UserForAdmin): string {
-  if (u.username?.trim()) return u.username.trim();
+  if (u.name?.trim()) return u.name.trim();
   const email = u.email ?? "";
   const at = email.indexOf("@");
   return at > 0 ? email.slice(0, at) : "—";
@@ -299,7 +299,7 @@ export default function AdminUserManagementDetailContent() {
                 Profile
               </h3>
               <p className="text-xs text-gray-600 dark:text-gray-400">
-                View and update name and role. Email and username are read-only.
+                View and update name and role. Email is read-only.
               </p>
             </div>
           </div>

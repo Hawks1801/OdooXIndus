@@ -20,7 +20,7 @@ export type ProductForHome = {
   category: string;
   supplier: string;
   userId: string;
-  createdBy: string;
+  createdBy: string | null;
   updatedBy: string | null;
   createdAt: string;
   updatedAt: string | null;
@@ -42,7 +42,7 @@ export type CategoryForHome = {
   notes?: string | null;
   createdAt: string;
   updatedAt: string | null;
-  createdBy: string;
+  createdBy: string | null;
   updatedBy?: string | null;
 };
 
@@ -56,7 +56,7 @@ export type SupplierForHome = {
   notes?: string | null;
   createdAt: string;
   updatedAt: string | null;
-  createdBy: string;
+  createdBy: string | null;
   updatedBy?: string | null;
 };
 

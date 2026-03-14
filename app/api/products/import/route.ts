@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
             }
             const category = await prisma.category.findFirst({
               where: {
-                name: { equals: categoryName, mode: "insensitive" },
+                name: { equals: categoryName },
                 userId,
               },
             });
@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
             }
             const supplier = await prisma.supplier.findFirst({
               where: {
-                name: { equals: supplierName, mode: "insensitive" },
+                name: { equals: supplierName },
                 userId,
               },
             });
@@ -292,7 +292,7 @@ export async function POST(request: NextRequest) {
               name: String(rowData.name),
               sku: String(rowData.sku),
               price: Number(rowData.price),
-              quantity: BigInt(Number(rowData.quantity)),
+              quantity: Number(rowData.quantity),
               status: String(rowData.status),
               categoryId,
               supplierId,

@@ -11,7 +11,6 @@ const USER_SELECT = {
   id: true,
   email: true,
   name: true,
-  username: true,
   role: true,
   image: true,
   createdAt: true,
@@ -58,9 +57,7 @@ export async function createUserAdmin(data: CreateUserAdminInput) {
       email: data.email,
       name: data.name,
       password: hashedPassword,
-      username: data.username || null,
       role: (data.role as string) || "user",
-      createdAt: new Date(),
     },
     select: USER_SELECT,
   });
@@ -83,17 +80,6 @@ export async function deleteUserAdmin(id: string) {
 export async function emailExists(email: string): Promise<boolean> {
   const user = await prisma.user.findUnique({
     where: { email },
-    select: { id: true },
-  });
-  return !!user;
-}
-
-/**
- * Check if username already exists
- */
-export async function usernameExists(username: string): Promise<boolean> {
-  const user = await prisma.user.findUnique({
-    where: { username },
     select: { id: true },
   });
   return !!user;

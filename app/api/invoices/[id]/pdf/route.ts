@@ -53,9 +53,9 @@ export async function GET(
     if (invoice.clientId) {
       const client = await prisma.user.findUnique({
         where: { id: invoice.clientId },
-        select: { username: true, email: true },
+        select: { name: true, email: true },
       });
-      clientName = client?.username || client?.email || "Customer";
+      clientName = client?.name || client?.email || "Customer";
     }
 
     // Prepare PDF data

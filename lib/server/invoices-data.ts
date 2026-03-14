@@ -34,7 +34,7 @@ export type InvoiceForPage = {
   billingAddress: unknown;
   createdAt: string;
   updatedAt: string | null;
-  createdBy: string;
+  createdBy: string | null;
   updatedBy: string | null;
   /** Client/customer display name (for admin list; from order shipping or placer) */
   customerDisplay?: string | null;
@@ -65,7 +65,7 @@ export async function getInvoicesForUser(
   const invoices = await getInvoicesByUser(userId, undefined);
 
   // Resolve client names for admin display
-  const clientIds = [...new Set(invoices.map((inv) => inv.clientId).filter(Boolean))] as string[];
+  const clientIds = [...new Set(invoices.map((inv: any) => inv.clientId).filter(Boolean))] as string[];
   const clients = clientIds.length > 0
     ? await prisma.user.findMany({
         where: { id: { in: clientIds } },
@@ -74,7 +74,7 @@ export async function getInvoicesForUser(
     : [];
   const clientMap = new Map(clients.map((c) => [c.id, { name: c.name, email: c.email }]));
 
-  const transformed: InvoiceForPage[] = invoices.map((invoice) => {
+  const transformed: InvoiceForPage[] = invoices.map((invoice: any) => {
     const clientInfo = invoice.clientId ? clientMap.get(invoice.clientId) : undefined;
     return {
       id: invoice.id,
@@ -128,7 +128,7 @@ export async function getInvoicesForClientId(
   const invoices = await getInvoicesByClientId(clientUserId, undefined);
 
   // Resolve issuer (product owner) from order items for each invoice
-  const orderIds = [...new Set(invoices.map((inv) => inv.orderId))];
+  const orderIds = [...new Set(invoices.map((inv: any) => inv.orderId))];
   const orders = orderIds.length > 0
     ? await prisma.order.findMany({
         where: { id: { in: orderIds } },
@@ -150,11 +150,11 @@ export async function getInvoicesForClientId(
   // Collect all user IDs we need to look up (product owners + invoice.userId for fallback)
   const allUserIds = [
     ...new Set([
-      ...invoices.map((inv) => inv.userId),
-      ...invoices.map((inv) => inv.createdBy),
+      ...invoices.map((inv: any) => inv.userId),
+      ...invoices.map((inv: any) => inv.createdBy),
       ...Array.from(orderProductOwnerMap.values()),
     ]),
-  ].filter(Boolean);
+  ].filter(Boolean) as string[];
   const users =
     allUserIds.length > 0
       ? await prisma.user.findMany({
@@ -164,7 +164,7 @@ export async function getInvoicesForClientId(
       : [];
   const userMap = new Map(users.map((u) => [u.id, u]));
 
-  const transformed: InvoiceForPage[] = invoices.map((invoice) => {
+  const transformed: InvoiceForPage[] = invoices.map((invoice: any) => {
     // Priority: product owner from order items > createdBy > userId
     const productOwnerId = orderProductOwnerMap.get(invoice.orderId);
     const issuerId = productOwnerId ?? invoice.createdBy ?? invoice.userId;
@@ -242,7 +242,7 @@ export async function getClientInvoicesForProductOwner(
     orderCustomerDisplay.set(order.id, name ?? placedByName ?? "Client");
   }
 
-  const transformed: InvoiceForPage[] = invoices.map((invoice) => ({
+  const transformed: InvoiceForPage[] = invoices.map((invoice: any) => ({
     id: invoice.id,
     invoiceNumber: invoice.invoiceNumber,
     orderId: invoice.orderId,

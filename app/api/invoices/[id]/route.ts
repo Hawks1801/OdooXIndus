@@ -251,7 +251,7 @@ export async function PUT(
     }
 
     // Update invoice
-    const invoice = await updateInvoice(id, updateData, ownerUserId);
+    const invoice = await updateInvoice(id, updateData);
 
     // When invoice is marked as paid, also confirm the associated order + deduct stock
     if (invoice.status === "paid" && invoice.orderId) {
@@ -389,7 +389,7 @@ export async function DELETE(
     }
 
     const existingInvoice = await getInvoiceById(invoiceId, ownerUserId);
-    await deleteInvoice(invoiceId, ownerUserId);
+    await deleteInvoice(invoiceId);
 
     createAuditLog({
       userId,

@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       // 1. Update Product global quantity
       await tx.product.update({
         where: { id: productId },
-        data: { quantity: BigInt(adjustedQty) }
+        data: { quantity: adjustedQty }
       });
 
       // 2. Update or create StockAllocation
@@ -42,16 +42,15 @@ export async function POST(request: NextRequest) {
       if (existingAllocation) {
         await tx.stockAllocation.update({
           where: { id: existingAllocation.id },
-          data: { quantity: { increment: BigInt(difference) } }
+          data: { quantity: { increment: difference } }
         });
       } else {
         await tx.stockAllocation.create({
           data: {
             productId,
             warehouseId,
-            quantity: BigInt(adjustedQty),
-            userId: session.id,
-            status: "available"
+            quantity: adjustedQty,
+            userId: session.id
           }
         });
       }

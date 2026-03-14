@@ -189,7 +189,7 @@ export async function POST(
     );
 
     // Mark invoice as sent
-    const updatedInvoice = await markInvoiceAsSent(invoiceId, ownerUserId);
+    const updatedInvoice = await markInvoiceAsSent(invoiceId);
 
     // Notify order owner in-app (non-blocking)
     if (order.userId) {

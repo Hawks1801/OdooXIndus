@@ -49,7 +49,7 @@ export async function POST(
           await tx.stockAllocation.update({
             where: { id: existingAllocation.id },
             data: {
-              quantity: { increment: BigInt(item.quantity) }
+              quantity: { increment: item.quantity }
             }
           });
         } else {
@@ -57,9 +57,8 @@ export async function POST(
             data: {
               productId: item.productId,
               warehouseId: receipt.warehouseId,
-              quantity: BigInt(item.quantity),
-              userId: session.id,
-              status: "available"
+              quantity: item.quantity,
+              userId: session.id
             }
           });
         }

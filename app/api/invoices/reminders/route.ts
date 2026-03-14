@@ -99,11 +99,11 @@ export async function POST(request: NextRequest) {
         if (invoice.clientId) {
           const client = await prisma.user.findUnique({
             where: { id: invoice.clientId },
-            select: { email: true, username: true },
+            select: { email: true, name: true },
           });
           if (client) {
             clientEmail = client.email;
-            clientName = client.username || "Customer";
+            clientName = client.name || "Customer";
           }
         }
 

@@ -23,7 +23,7 @@ type LogRecord = Awaited<ReturnType<typeof getAuditLogs>>["logs"][number] |
  */
 function transform(
   log: LogRecord,
-  userMap: Map<string, { name?: string | null; username?: string | null; email: string }>,
+  userMap: Map<string, { name?: string | null; email: string }>,
 ): AuditLog {
   const user = userMap.get(log.userId);
   return {
@@ -40,7 +40,6 @@ function transform(
       ? {
           id: log.userId,
           name: user.name ?? null,
-          username: user.username ?? user.name ?? undefined,
           email: user.email,
         }
       : undefined,

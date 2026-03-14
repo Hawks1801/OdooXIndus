@@ -69,8 +69,6 @@ export async function POST(request: NextRequest) {
         type: type && typeof type === "string" ? type.trim() || null : null,
         status: status !== undefined ? Boolean(status) : true,
         createdBy: userId,
-        createdAt: new Date(),
-        updatedAt: null,
       },
     });
 

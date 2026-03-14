@@ -14,7 +14,6 @@ function transform(
     id: r.id,
     email: r.email,
     name: r.name,
-    username: r.username,
     role: r.role as UserForAdmin["role"],
     image: r.image,
     createdAt: r.createdAt.toISOString(),

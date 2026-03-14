@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 
       await tx.stockAllocation.update({
         where: { id: sourceAllocation.id },
-        data: { quantity: { decrement: BigInt(quantity) } }
+        data: { quantity: { decrement: quantity } }
       });
 
       // 2. Increase in destination
@@ -48,27 +48,25 @@ export async function POST(request: NextRequest) {
       if (destAllocation) {
         await tx.stockAllocation.update({
           where: { id: destAllocation.id },
-          data: { quantity: { increment: BigInt(quantity) } }
+          data: { quantity: { increment: quantity } }
         });
       } else {
         await tx.stockAllocation.create({
           data: {
             productId,
             warehouseId: toWarehouseId,
-            quantity: BigInt(quantity),
-            userId: session.id,
-            status: "available"
+            quantity: quantity,
+            userId: session.id
           }
         });
       }
 
-      // 3. Create transfer record
       await tx.stockTransfer.create({
         data: {
           productId,
           fromWarehouseId,
           toWarehouseId,
-          quantity: BigInt(quantity),
+          quantity: quantity,
           status: "completed",
           notes,
           userId: session.id,

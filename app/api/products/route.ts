@@ -196,9 +196,9 @@ export async function POST(request: NextRequest) {
     } = body;
 
     // Validate required fields
-    if (!name || !sku || price === undefined || quantity === undefined) {
+    if (!name || !sku || price === undefined || quantity === undefined || !categoryId || !supplierId) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Missing required fields: Category and Supplier must be selected" },
         { status: 400 },
       );
     }
@@ -211,6 +211,29 @@ export async function POST(request: NextRequest) {
     if (existingProduct) {
       return NextResponse.json(
         { error: "SKU must be unique" },
+        { status: 400 },
+      );
+    }
+
+    // Fetch category and supplier data for the response and foreign key validation
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId },
+    });
+    
+    if (!category) {
+      return NextResponse.json(
+        { error: "Selected Category does not exist." },
+        { status: 400 },
+      );
+    }
+    
+    const supplier = await prisma.supplier.findUnique({
+      where: { id: supplierId },
+    });
+
+    if (!supplier) {
+      return NextResponse.json(
+        { error: "Selected Supplier does not exist." },
         { status: 400 },
       );
     }
@@ -232,8 +255,6 @@ export async function POST(request: NextRequest) {
         expirationDate: expirationDate ? new Date(expirationDate) : null,
         unitOfMeasure: unitOfMeasure || "pcs",
         initialStock: initialStock || 0,
-        createdAt: new Date(),
-        updatedAt: null, // Set to null on creation - will be set when updated
       },
     });
 
@@ -244,14 +265,6 @@ export async function POST(request: NextRequest) {
       entityId: product.id,
       details: { productName: product.name, sku: product.sku },
     }).catch(() => {});
-
-    // Fetch category and supplier data for the response
-    const category = await prisma.category.findUnique({
-      where: { id: categoryId },
-    });
-    const supplier = await prisma.supplier.findUnique({
-      where: { id: supplierId },
-    });
 
     // Generate QR code and upload to ImageKit (async, don't block response)
     generateAndUploadQRCode(
@@ -424,7 +437,7 @@ export async function PUT(request: NextRequest) {
         ...(name && { name }),
         ...(sku && { sku }),
         ...(price !== undefined && { price }),
-        ...(quantity !== undefined && { quantity: BigInt(quantity) as any }),
+        ...(quantity !== undefined && { quantity }),
         ...(status && { status }),
         ...(categoryId && { categoryId }),
         ...(supplierId && { supplierId }),
@@ -450,7 +463,7 @@ export async function PUT(request: NextRequest) {
     if (name && name !== existingProduct.name) fieldsUpdated.push("Name");
     if (sku && sku !== existingProduct.sku) fieldsUpdated.push("SKU");
     if (price !== undefined && Number(existingProduct.price) !== price) fieldsUpdated.push("Price");
-    if (quantity !== undefined && existingProduct.quantity !== BigInt(quantity)) fieldsUpdated.push("Quantity");
+    if (quantity !== undefined && existingProduct.quantity !== quantity) fieldsUpdated.push("Quantity");
     if (status && status !== existingProduct.status) fieldsUpdated.push("Status");
     if (categoryId && categoryId !== existingProduct.categoryId) fieldsUpdated.push("Category");
     if (supplierId && supplierId !== existingProduct.supplierId) fieldsUpdated.push("Supplier");

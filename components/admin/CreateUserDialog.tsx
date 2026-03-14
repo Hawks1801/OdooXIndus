@@ -72,7 +72,6 @@ export default function CreateUserDialog() {
       email: "",
       name: "",
       password: "",
-      username: "",
       role: "user",
     },
   });
@@ -138,27 +137,6 @@ export default function CreateUserDialog() {
               />
               {errors.name && (
                 <p className="text-sm text-rose-400">{errors.name.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label
-                htmlFor="username"
-                className="text-sm font-medium text-white/80"
-              >
-                Username
-              </Label>
-              <Input
-                id="username"
-                {...register("username")}
-                placeholder="johndoe"
-                autoComplete="off"
-                className="h-11 dark:border-white/20 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-white placeholder:text-white/40 focus:ring-blue-500/50 "
-              />
-              {errors.username && (
-                <p className="text-sm text-rose-400">
-                  {errors.username.message}
-                </p>
               )}
             </div>
           </div>

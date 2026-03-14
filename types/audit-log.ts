@@ -14,6 +14,9 @@ export type AuditAction =
   | "send"
   | "payment"
   | "ship"
+  | "adjust"
+  | "validate"
+  | "transfer"
   | "settings_change";
 
 export type AuditEntityType =
@@ -24,6 +27,7 @@ export type AuditEntityType =
   | "supplier"
   | "category"
   | "warehouse"
+  | "receipt"
   | "ticket"
   | "review"
   | "system_config"

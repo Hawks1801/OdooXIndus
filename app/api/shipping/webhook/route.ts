@@ -76,13 +76,13 @@ export async function POST(request: NextRequest) {
         if (order.clientId) {
           const client = await prisma.user.findUnique({
             where: { id: order.clientId },
-            select: { email: true, username: true },
+            select: { email: true, name: true },
           });
 
           if (client?.email) {
             const statusUpdateData: OrderStatusUpdateData = {
               orderNumber: order.orderNumber,
-              clientName: client.username || "Valued Customer",
+              clientName: client.name || "Valued Customer",
               clientEmail: client.email,
               previousStatus: prevStatus,
               newStatus,
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
             sendOrderStatusUpdate(
               statusUpdateData,
               client.email,
-              client.username || undefined,
+              client.name || undefined,
             ).catch((err) =>
               logger.warn("Failed to send status update email", { error: err }),
             );

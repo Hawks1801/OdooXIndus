@@ -63,6 +63,9 @@ const actionColors: Record<AuditAction, string> = {
   ship: "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400",
   settings_change:
     "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+  adjust: "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400",
+  validate: "bg-lime-100 text-lime-700 dark:bg-lime-900/30 dark:text-lime-400",
+  transfer: "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400",
 };
 
 const variantConfig = {
@@ -236,7 +239,7 @@ export default function ActivityLogSection({
     const term = searchTerm.toLowerCase().trim();
     return rawLogs.filter((log) => {
       const name =
-        log.user?.name ?? log.user?.username ?? log.user?.email ?? "";
+        log.user?.name ?? log.user?.email ?? "";
       const email = log.user?.email ?? "";
       const action = log.action ?? "";
       const entityType = log.entityType ?? "";
@@ -260,7 +263,6 @@ export default function ActivityLogSection({
           const log = row.original;
           const name =
             log.user?.name ??
-            log.user?.username ??
             log.user?.email ??
             log.userId.slice(-8);
           const email = log.user?.email ?? "—";

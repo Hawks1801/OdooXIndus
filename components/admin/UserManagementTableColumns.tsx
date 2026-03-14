@@ -86,9 +86,9 @@ const PROTECTED_EMAILS = [
   "test@client.com",
 ];
 
-/** Derive display username from email when username is empty (e.g. Gmail login) */
+/** Derive display username from email when name is empty (e.g. Gmail login) */
 function getDisplayUsername(user: UserForAdmin): string {
-  if (user.username?.trim()) return user.username.trim();
+  if (user.name?.trim()) return user.name.trim();
   const email = user.email ?? "";
   const at = email.indexOf("@");
   return at > 0 ? email.slice(0, at) : "—";

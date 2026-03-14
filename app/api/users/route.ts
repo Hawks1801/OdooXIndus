@@ -11,7 +11,6 @@ import {
   getAllUsers,
   createUserAdmin,
   emailExists,
-  usernameExists,
 } from "@/prisma/user-admin";
 import { getCache, setCache, cacheKeys } from "@/lib/cache";
 import { createAuditLog } from "@/prisma/audit-log";
@@ -26,7 +25,6 @@ function transform(
     id: r.id,
     email: r.email,
     name: r.name,
-    username: r.username,
     role: r.role as UserForAdmin["role"],
     image: r.image,
     createdAt: r.createdAt.toISOString(),
@@ -106,14 +104,6 @@ export async function POST(request: NextRequest) {
     if (await emailExists(data.email)) {
       return NextResponse.json(
         { error: "Email already registered" },
-        { status: 409 },
-      );
-    }
-
-    // Check if username already exists (if provided)
-    if (data.username && (await usernameExists(data.username))) {
-      return NextResponse.json(
-        { error: "Username already taken" },
         { status: 409 },
       );
     }

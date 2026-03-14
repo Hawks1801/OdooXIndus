@@ -53,3 +53,12 @@ export const updateSupplier = async (id: string, data: { name?: string }) => {
 export const deleteSupplier = async (id: string) => {
   return prisma.supplier.delete({ where: { id } });
 };
+
+export async function getSupplierById(supplierId: string, userId?: string) {
+  return prisma.supplier.findFirst({
+    where: {
+      id: supplierId,
+      ...(userId && { userId }),
+    },
+  });
+}

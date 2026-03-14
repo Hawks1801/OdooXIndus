@@ -45,13 +45,9 @@ export async function GET(
 
     const { productId } = await params;
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get("status") as "approved" | "pending" | "all" | null;
-    const options =
-      status === "all" || status === "pending"
-        ? { status: status ?? "approved" }
-        : {};
+    const status = (searchParams.get("status") as string) || "approved";
 
-    const reviews = await getReviewsByProductId(productId, options);
+    const reviews = await getReviewsByProductId(productId, status);
     const userIds = [...new Set(reviews.map((r) => r.userId))];
     const users =
       userIds.length > 0

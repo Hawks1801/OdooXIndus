@@ -100,11 +100,11 @@ export async function POST(request: NextRequest) {
     if (order.clientId) {
       const client = await prisma.user.findUnique({
         where: { id: order.clientId },
-        select: { email: true, username: true },
+        select: { email: true, name: true },
       });
       if (client?.email) {
         clientEmail = client.email;
-        clientName = client.username || "Valued Customer";
+        clientName = client.name || "Valued Customer";
       }
     }
 

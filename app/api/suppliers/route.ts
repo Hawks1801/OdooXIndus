@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       action: "create",
       entityType: "supplier",
       entityId: supplier.id,
-      details: JSON.stringify({ name: supplier.name }),
+      details: { name: supplier.name },
     }).catch(() => {});
 
     return NextResponse.json(supplier, { status: 201 });

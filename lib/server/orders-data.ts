@@ -7,6 +7,9 @@ import {
 } from "@/prisma/order";
 import { prisma } from "@/prisma/client";
 
+/** Serialised order shape returned by getOrdersFor* helpers (dates as ISO strings). */
+export type OrderForPage = ReturnType<typeof transformOrder> extends Promise<infer T> ? T : ReturnType<typeof transformOrder>;
+
 /**
  * Transforms order dates to ISO strings for React Server Components
  */

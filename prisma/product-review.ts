@@ -3,14 +3,14 @@ import { prisma } from "@/prisma/client";
 /**
  * Create a new product review
  */
-export async function createProductReview(data: any) {
+export async function createProductReview(data: any, userId: string) {
   return prisma.productReview.create({
     data: {
       productId: data.productId,
-      userId: data.userId,
+      userId: userId,
       orderId: data.orderId || null,
       orderItemId: data.orderItemId || null,
-      productName: data.productName,
+      productName: data.productName || "Product", // Fallback if name not provided
       productSku: data.productSku || null,
       rating: data.rating,
       comment: data.comment,
@@ -43,11 +43,11 @@ export async function getProductReviewsForProductOwner(userId: string) {
 }
 
 /**
- * Check if a user already reviewed a specific order item
+ * Check if a user already reviewed a specific order/product
  */
-export async function hasExistingReview(userId: string, orderItemId: string) {
+export async function hasExistingReview(orderId: string, productId: string, userId: string) {
   const existing = await prisma.productReview.findFirst({
-    where: { userId, orderItemId },
+    where: { userId, orderId, productId },
   });
   return !!existing;
 }
@@ -89,4 +89,35 @@ export async function getReviewsByProductId(productId: string, status: string = 
     orderBy: { createdAt: "desc" },
     take: 50,
   });
+}
+
+/**
+ * Get a single product review by ID
+ */
+export async function getProductReviewById(reviewId: string) {
+  return prisma.productReview.findUnique({
+    where: { id: reviewId },
+  });
+}
+
+/**
+ * Update a product review
+ */
+export async function updateProductReview(reviewId: string, data: any) {
+  return prisma.productReview.update({
+    where: { id: reviewId },
+    data: {
+      ...(data.rating != null && { rating: data.rating }),
+      ...(data.comment != null && { comment: data.comment }),
+      ...(data.status != null && { status: data.status }),
+      updatedAt: new Date(),
+    },
+  });
+}
+
+/**
+ * Delete a product review
+ */
+export async function deleteProductReview(reviewId: string) {
+  return prisma.productReview.delete({ where: { id: reviewId } });
 }

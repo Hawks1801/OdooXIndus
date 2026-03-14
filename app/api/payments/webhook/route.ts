@@ -159,7 +159,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
       // Enterprise: auto-create or mark invoice for this order (every paid order has an invoice for records)
       try {
-        await ensureInvoiceForPaidOrder(orderIdToUpdate!, amountTotal);
+        await ensureInvoiceForPaidOrder(orderIdToUpdate!, order?.userId ?? userId ?? "");
       } catch (invErr) {
         logger.error("Failed to ensure invoice for paid order", {
           orderId: orderIdToUpdate,

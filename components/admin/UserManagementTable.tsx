@@ -67,7 +67,6 @@ export const UserManagementTable = React.memo(function UserManagementTable({
         !searchTerm ||
         u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (u.username ?? "").toLowerCase().includes(searchTerm.toLowerCase()) ||
         emailPrefix.toLowerCase().includes(searchTerm.toLowerCase());
       const roleMatch =
         selectedRoles.length === 0 || selectedRoles.includes(u.role ?? "user");

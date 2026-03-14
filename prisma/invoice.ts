@@ -50,7 +50,7 @@ export async function getInvoicesByClientId(clientId: string, filters?: InvoiceF
 }
 
 /**
- * RESTORED: Get invoices by order IDs
+ * Get invoices by order IDs
  */
 export async function getInvoicesByOrderIds(orderIds: string[]) {
   if (orderIds.length === 0) return [];
@@ -61,10 +61,108 @@ export async function getInvoicesByOrderIds(orderIds: string[]) {
 }
 
 /**
- * RESTORED: Get invoice by ID
+ * Get invoice by ID
  */
 export async function getInvoiceById(invoiceId: string, userId: string) {
   return prisma.invoice.findFirst({
     where: { id: invoiceId, userId },
+  });
+}
+
+/**
+ * Get invoice by ID for a product owner (admin viewing a client invoice).
+ * Returns the invoice if any order item belongs to a product owned by this user.
+ */
+export async function getInvoiceByIdForProductOwner(
+  invoiceId: string,
+  productOwnerUserId: string,
+) {
+  const invoice = await prisma.invoice.findUnique({
+    where: { id: invoiceId },
+    include: {
+      order: {
+        include: {
+          items: {
+            include: {
+              product: { select: { userId: true } },
+            },
+          },
+        },
+      },
+    },
+  });
+  if (!invoice) return null;
+  const hasMyProduct = invoice.order?.items?.some(
+    (item) => item.product.userId === productOwnerUserId,
+  );
+  return hasMyProduct ? invoice : null;
+}
+
+/**
+ * Update an invoice
+ */
+export async function updateInvoice(invoiceId: string, data: any) {
+  return prisma.invoice.update({
+    where: { id: invoiceId },
+    data: {
+      ...(data.status != null && { status: data.status }),
+      ...(data.amountPaid != null && { amountPaid: data.amountPaid }),
+      ...(data.amountDue != null && { amountDue: data.amountDue }),
+      ...(data.dueDate != null && { dueDate: new Date(data.dueDate) }),
+      ...(data.cancelledAt != null && { cancelledAt: data.cancelledAt }),
+      updatedAt: new Date(),
+    },
+  });
+}
+
+/**
+ * Delete an invoice
+ */
+export async function deleteInvoice(invoiceId: string) {
+  return prisma.invoice.delete({ where: { id: invoiceId } });
+}
+
+/**
+ * Mark invoice as sent
+ */
+export async function markInvoiceAsSent(invoiceId: string) {
+  return prisma.invoice.update({
+    where: { id: invoiceId },
+    data: {
+      status: "sent",
+      updatedAt: new Date(),
+    },
+  });
+}
+
+/**
+ * Create invoice for a paid order if one does not exist yet
+ */
+export async function ensureInvoiceForPaidOrder(orderId: string, userId: string) {
+  const existing = await prisma.invoice.findUnique({
+    where: { orderId },
+  });
+  if (existing) return existing;
+
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+  });
+  if (!order) throw new Error("Order not found");
+
+  const invoiceNumber = await generateInvoiceNumber();
+  return prisma.invoice.create({
+    data: {
+      invoiceNumber,
+      orderId,
+      userId,
+      clientId: order.clientId,
+      status: "paid",
+      subtotal: order.total,
+      total: order.total,
+      amountPaid: order.total,
+      amountDue: 0,
+      dueDate: new Date(),
+      issuedAt: new Date(),
+    },
   });
 }

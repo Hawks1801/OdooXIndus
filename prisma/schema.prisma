@@ -1,4 +1,4 @@
-// Prisma schema for CoreInventory: SQLite (Final Fix with Invoices)
+// Prisma schema for CoreInventory: SQLite (Comprehensive Fix)
 generator client {
   provider = "prisma-client-js"
 }
@@ -22,6 +22,7 @@ model User {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   notifications    Notification[]
+  tickets          SupportTicket[]
 }
 
 model Category {
@@ -30,6 +31,9 @@ model Category {
   userId      String
   status      Boolean   @default(true)
   description String?
+  notes       String?
+  createdBy   String?
+  updatedBy   String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   products    Product[]
@@ -53,6 +57,8 @@ model Product {
   categoryId       String
   supplierId       String
   userId           String
+  createdBy        String?
+  updatedBy        String?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   category         Category          @relation(fields: [categoryId], references: [id])
@@ -69,6 +75,9 @@ model Supplier {
   userId      String
   status      Boolean   @default(true)
   description String?
+  notes       String?
+  createdBy   String?
+  updatedBy   String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   products    Product[]
@@ -80,7 +89,10 @@ model Warehouse {
   address   String?
   type      String?  @default("main")
   status    Boolean  @default(true)
+  notes     String?
   userId    String
+  createdBy String?
+  updatedBy String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -123,22 +135,39 @@ model StockAdjustment {
 }
 
 model Order {
-  id              String      @id @default(cuid())
-  orderNumber     String      @unique
-  userId          String
-  clientId        String?
-  status          String      @default("pending")
-  paymentStatus   String      @default("unpaid")
-  total           Float       @default(0)
-  shippingAddress String?     
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  items           OrderItem[]
-  invoice         Invoice?    // Relation to Invoice added!
+  id                     String      @id @default(cuid())
+  orderNumber            String      @unique
+  userId                 String
+  clientId               String?
+  status                 String      @default("pending")
+  paymentStatus          String      @default("unpaid")
+  subtotal               Float       @default(0)
+  tax                    Float?
+  shipping               Float?
+  discount               Float?
+  total                  Float       @default(0)
+  shippingAddress        String?
+  billingAddress         String?
+  trackingNumber         String?
+  trackingCarrier        String?
+  trackingUrl            String?
+  labelUrl               String?
+  estimatedDelivery      DateTime?
+  shippedAt              DateTime?
+  deliveredAt            DateTime?
+  cancelledAt            DateTime?
+  notes                  String?
+  createdBy              String?
+  updatedBy              String?
+  stripePaymentIntentId  String?
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+  items                  OrderItem[]
+  invoice                Invoice?
 }
 
 model OrderItem {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   orderId     String
   productId   String
   productName String
@@ -146,35 +175,69 @@ model OrderItem {
   quantity    Int
   price       Float
   subtotal    Float
-  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product     Product @relation(fields: [productId], references: [id])
+  createdAt   DateTime @default(now())
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id])
 }
 
 model Invoice {
-  id            String    @id @default(cuid())
-  invoiceNumber String    @unique
-  orderId       String    @unique
-  userId        String
-  clientId      String?
-  status        String    @default("draft")
-  subtotal      Float
-  tax           Float?
-  shipping      Float?
-  discount      Float?
-  total         Float
-  amountPaid    Float     @default(0)
-  amountDue     Float
-  dueDate       DateTime
-  issuedAt      DateTime  @default(now())
-  sentAt        DateTime?
-  paidAt        DateTime?
-  cancelledAt   DateTime?
-  paymentLink   String?
-  notes         String?
-  billingAddress String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  order         Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  id                    String    @id @default(cuid())
+  invoiceNumber         String    @unique
+  orderId               String    @unique
+  userId                String
+  clientId              String?
+  status                String    @default("draft")
+  subtotal              Float
+  tax                   Float?
+  shipping              Float?
+  discount              Float?
+  total                 Float
+  amountPaid            Float     @default(0)
+  amountDue             Float
+  billingAddress        String?
+  shippingAddress       String?
+  notes                 String?
+  dueDate               DateTime
+  issuedAt              DateTime  @default(now())
+  paidAt                DateTime?
+  sentAt                DateTime?
+  cancelledAt           DateTime?
+  paymentLink           String?
+  stripePaymentIntentId String?
+  createdBy             String?
+  updatedBy             String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  order                 Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model SupportTicket {
+  id           String               @id @default(cuid())
+  ticketId     String               @unique
+  userId       String
+  subject      String
+  description  String
+  status       String               @default("open")
+  priority     String               @default("medium")
+  category     String               @default("general")
+  assignedToId String?
+  productId    String?
+  orderId      String?
+  supplierId   String?
+  notes        String?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  replies      SupportTicketReply[]
+}
+
+model SupportTicketReply {
+  id        String        @id @default(cuid())
+  ticketId  String
+  userId    String
+  body      String
+  createdAt DateTime      @default(now())
+  ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 }
 
 model ProductReview {
@@ -225,9 +288,28 @@ model Notification {
   type      String
   title     String
   message   String
+  link      String?
+  metadata  String?
   read      Boolean  @default(false)
+  readAt    DateTime?
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ImportHistory {
+  id          String    @id @default(cuid())
+  userId      String
+  importType  String
+  fileName    String
+  fileSize    Int       @default(0)
+  totalRows   Int       @default(0)
+  status      String
+  successRows Int       @default(0)
+  failedRows  Int       @default(0)
+  errors      String?   // JSON string
+  details     String?   // JSON string
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
 }
 
 model AuditLog {
@@ -237,5 +319,7 @@ model AuditLog {
   entityType String
   entityId   String?
   details    String?  
+  ipAddress  String?
+  userAgent  String?
   createdAt  DateTime @default(now())
 }

@@ -20,7 +20,6 @@ export interface UserForAdmin {
   id: string;
   email: string;
   name: string;
-  username: string | null;
   role: UserRole | null;
   image: string | null;
   createdAt: string;
@@ -37,7 +36,6 @@ export interface CreateUserAdminInput {
   email: string;
   name: string;
   password: string;
-  username?: string;
   role?: UserRole | null;
 }
 
