@@ -710,7 +710,7 @@ export default function OrderDialog({
                       <SelectValue placeholder="Select Status" />
                     </SelectTrigger>
                     <SelectContent
-                      className="dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
+                      className="dark:border-white/10 bg-white dark:bg-popover backdrop-blur-sm z-[9999]"
                       position="popper"
                       sideOffset={5}
                       align="start"
@@ -749,7 +749,7 @@ export default function OrderDialog({
                       <SelectValue placeholder="Select Payment Status" />
                     </SelectTrigger>
                     <SelectContent
-                      className="dark:border-white/10 bg-white/80 dark:bg-popover/50 backdrop-blur-sm z-[100]"
+                      className="dark:border-white/10 bg-white dark:bg-popover backdrop-blur-sm z-[9999]"
                       position="popper"
                       sideOffset={5}
                       align="start"
