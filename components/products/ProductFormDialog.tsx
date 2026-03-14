@@ -196,9 +196,8 @@ export default function AddProductDialog({
     }
   };
 
-  // Determine if form is submitting based on mutation states
   const isSubmitting = createProductMutation.isPending || updateProductMutation.isPending;
-  const isFormValid = selectedSupplier;
+  const isFormValid = !!methods.watch("productName") && !!methods.watch("sku") && !!selectedSupplier;
 
   const handleOpenChange = (open: boolean) => {
     if (open) {

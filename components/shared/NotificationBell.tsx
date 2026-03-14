@@ -64,7 +64,7 @@ export function NotificationBell() {
         variant="ghost"
         size="icon"
         onClick={() => setIsOpen(!isOpen)}
-        className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-full border text-white  backdrop-blur-sm transition duration-200 dark: focus-visible:outline-none focus:outline-none focus-visible:ring-0 focus:ring-0"
+        className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-full border border-gray-200 dark:border-white/10 backdrop-blur-sm transition duration-200 cursor-pointer focus-visible:outline-none focus:outline-none focus-visible:ring-0 focus:ring-0"
         aria-label="Notifications"
       >
         <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-rose-400 dark:text-rose-300" />
