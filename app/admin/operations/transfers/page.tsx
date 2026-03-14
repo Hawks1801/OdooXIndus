@@ -173,21 +173,28 @@ export default function TransfersPage() {
               <thead className="bg-muted/30">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Date</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Product ID</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Product</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">From</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">To</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Qty</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {loading ? (
-                  <tr><td colSpan={4} className="px-4 py-4 text-center text-sm">Loading...</td></tr>
+                  <tr><td colSpan={6} className="px-4 py-4 text-center text-sm">Loading...</td></tr>
                 ) : transfers.length === 0 ? (
-                  <tr><td colSpan={4} className="px-4 py-4 text-center text-sm">No transfers found.</td></tr>
+                  <tr><td colSpan={6} className="px-4 py-4 text-center text-sm">No transfers found.</td></tr>
                 ) : transfers.map((t) => (
                   <tr key={t.id} className="text-sm hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-3">{format(new Date(t.createdAt), "MMM d, HH:mm")}</td>
-                    <td className="px-4 py-3 font-mono text-xs">{t.productId.slice(-6)}</td>
-                    <td className="px-4 py-3 font-semibold">{t.quantity.toString()}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">{format(new Date(t.createdAt), "MMM d, HH:mm")}</td>
+                    <td className="px-4 py-3">
+                      <span className="font-medium">{t.productName ?? t.productId}</span>
+                      {t.productSku && <span className="ml-1 text-xs text-muted-foreground">({t.productSku})</span>}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">{t.fromWarehouseName ?? t.fromWarehouseId}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{t.toWarehouseName ?? t.toWarehouseId}</td>
+                    <td className="px-4 py-3 font-semibold">{t.quantity}</td>
                     <td className="px-4 py-3">
                       <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase">
                         {t.status}
