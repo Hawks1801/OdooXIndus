@@ -27,6 +27,58 @@ export default function RegisterPage() {
   const router = useRouter();
   const { toast } = useToast();
 
+  // Handle OAuth errors from callback
+  React.useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const error = searchParams.get("error");
+    if (error) {
+      let errorMessage = "An error occurred during Google sign-up.";
+
+      switch (error) {
+        case "oauth_not_configured":
+          errorMessage =
+            "Google OAuth is not configured. Please contact support.";
+          break;
+        case "oauth_failed":
+          errorMessage =
+            "Google sign-in was cancelled or failed. Please try again.";
+          break;
+        case "invalid_state":
+          errorMessage = "Invalid OAuth state. Please try again.";
+          break;
+        case "no_code":
+          errorMessage = "OAuth authorization code missing. Please try again.";
+          break;
+        case "token_exchange_failed":
+          errorMessage = "Failed to exchange OAuth token. Please try again.";
+          break;
+        case "fetch_user_failed":
+          errorMessage =
+            "Failed to fetch user information from Google. Please try again.";
+          break;
+        case "no_email":
+          errorMessage = "Google account email is required. Please try again.";
+          break;
+        case "oauth_processing_failed":
+        case "oauth_error":
+          errorMessage =
+            "An error occurred during OAuth processing. Please try again.";
+          break;
+        default:
+          errorMessage = `OAuth error: ${error}. Please try again.`;
+      }
+
+      toast({
+        title: "Google Sign-In Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
+
+      // Clean up URL
+      router.replace("/register");
+    }
+  }, [router, toast]);
+
   /**
    * Handle Google OAuth sign-up
    * Redirects to Google OAuth flow

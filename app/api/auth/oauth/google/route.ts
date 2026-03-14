@@ -15,9 +15,8 @@ import { logger } from "@/lib/logger";
 export async function GET(request: NextRequest) {
   try {
     if (!isGoogleOAuthConfigured()) {
-      return NextResponse.json(
-        { error: "Google OAuth is not configured" },
-        { status: 503 }
+      return NextResponse.redirect(
+        new URL("/login?error=oauth_not_configured", request.url)
       );
     }
 
