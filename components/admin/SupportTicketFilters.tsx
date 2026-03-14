@@ -1,0 +1,147 @@
+/**
+ * Support Ticket Filters
+ * Search and filter controls for support tickets list
+ */
+
+"use client";
+
+import React, { useState, useLayoutEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
+import { IoClose } from "react-icons/io5";
+import { FilterDropdown } from "@/components/ui/filter-dropdown";
+import { MessageSquare } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ChevronDown } from "lucide-react";
+import type { SupportTicketViewFilter } from "@/hooks/queries/use-support-tickets";
+
+const STATUS_OPTIONS = [
+  { id: "open", name: "Open" },
+  { id: "in_progress", name: "In Progress" },
+  { id: "resolved", name: "Resolved" },
+  { id: "closed", name: "Closed" },
+];
+
+const PRIORITY_OPTIONS = [
+  { id: "low", name: "Low" },
+  { id: "medium", name: "Medium" },
+  { id: "high", name: "High" },
+  { id: "urgent", name: "Urgent" },
+];
+
+const VIEW_OPTIONS: { value: SupportTicketViewFilter; label: string }[] = [
+  { value: "all", label: "All tickets" },
+  { value: "assigned_to_me", label: "Assigned to me" },
+  { value: "created_by_me", label: "Created by me" },
+];
+
+interface SupportTicketFiltersProps {
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  selectedStatuses: string[];
+  setSelectedStatuses: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedPriorities: string[];
+  setSelectedPriorities: React.Dispatch<React.SetStateAction<string[]>>;
+  viewFilter?: SupportTicketViewFilter;
+  onViewFilterChange?: (view: SupportTicketViewFilter) => void;
+}
+
+export default function SupportTicketFilters({
+  searchTerm,
+  setSearchTerm,
+  selectedStatuses,
+  setSelectedStatuses,
+  selectedPriorities,
+  setSelectedPriorities,
+  viewFilter = "all",
+  onViewFilterChange,
+}: SupportTicketFiltersProps) {
+  const [viewSelectMounted, setViewSelectMounted] = useState(false);
+  useLayoutEffect(() => {
+    const t = setTimeout(() => setViewSelectMounted(true), 0);
+    return () => clearTimeout(t);
+  }, []);
+
+  const statusTriggerClass =
+    "h-10 rounded-[28px] border          text-gray-700 dark:text-white  backdrop-blur-sm transition duration-200     dark:   ";
+  const priorityTriggerClass =
+    "h-10 rounded-[28px] border          text-gray-700 dark:text-white  backdrop-blur-sm transition duration-200     dark:   ";
+
+  return (
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+      <div className="relative flex-1 sm:max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-600 dark:text-white/60 z-10" />
+        <Input
+          placeholder="Search by subject or description..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="h-10 pl-9 pr-10 w-full rounded-[28px] bg-white/10 dark:bg-white/5 backdrop-blur-sm border dark:border-white/20 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-white/40 focus-visible: focus-visible:ring-sky-500/50 "
+        />
+        {searchTerm && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSearchTerm("")}
+            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0 text-white/60 hover:text-white hover:bg-white/10 backdrop-blur-sm"
+          >
+            <IoClose className="h-4 w-4 text-gray-700 dark:text-white/60" />
+          </Button>
+        )}
+      </div>
+      {onViewFilterChange &&
+        (!viewSelectMounted ? (
+          <div
+            className="h-10 w-[180px] rounded-[28px] border bg-white/10 dark:bg-white/5 text-gray-900 dark:text-white flex items-center justify-between px-3 py-2"
+            aria-hidden
+          >
+            <span>{VIEW_OPTIONS.find((o) => o.value === viewFilter)?.label ?? "View"}</span>
+            <ChevronDown className="h-4 w-4 opacity-70" />
+          </div>
+        ) : (
+          <Select
+            value={viewFilter}
+            onValueChange={(v) => onViewFilterChange(v as SupportTicketViewFilter)}
+          >
+            <SelectTrigger
+              className="h-10 w-[180px] rounded-[28px] border bg-white/10 dark:bg-white/5 text-gray-900 dark:text-white"
+            >
+              <SelectValue placeholder="View" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              {VIEW_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value} className="cursor-pointer">
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ))}
+      <div className="flex items-center gap-4 flex-wrap sm:flex-nowrap">
+        <FilterDropdown
+          selectedValues={selectedStatuses}
+          setSelectedValues={setSelectedStatuses}
+          options={STATUS_OPTIONS}
+          placeholder="Filter by status..."
+          label="Status"
+          icon={MessageSquare}
+          triggerClassName={statusTriggerClass}
+        />
+        <FilterDropdown
+          selectedValues={selectedPriorities}
+          setSelectedValues={setSelectedPriorities}
+          options={PRIORITY_OPTIONS}
+          placeholder="Filter by priority..."
+          label="Priority"
+          triggerClassName={priorityTriggerClass}
+        />
+      </div>
+    </div>
+  );
+}
