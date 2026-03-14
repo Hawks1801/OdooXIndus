@@ -78,6 +78,11 @@ const OPERATION_ITEMS: NavItem[] = [
     label: "Inventory Adjustment",
     icon: Settings2,
   },
+  {
+    href: "/admin/operations/transfers",
+    label: "Internal Transfers",
+    icon: ArrowRightLeft,
+  },
 ];
 
 const HISTORY_ITEM: NavItem = {
