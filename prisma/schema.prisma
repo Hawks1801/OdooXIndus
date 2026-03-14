@@ -1,4 +1,4 @@
-// Prisma schema for CoreInventory: SQLite (Fixed & Complete)
+// Prisma schema for CoreInventory: SQLite (Final Fix with Invoices)
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,7 +13,7 @@ model User {
   email            String         @unique
   name             String
   password         String
-  role             String?        @default("user") // admin | supplier | client
+  role             String?        @default("user")
   otp              String?
   otpExpires       DateTime?
   emailPreferences String?        
@@ -126,7 +126,7 @@ model Order {
   id              String      @id @default(cuid())
   orderNumber     String      @unique
   userId          String
-  clientId        String?     // Added back!
+  clientId        String?
   status          String      @default("pending")
   paymentStatus   String      @default("unpaid")
   total           Float       @default(0)
@@ -134,6 +134,7 @@ model Order {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   items           OrderItem[]
+  invoice         Invoice?    // Relation to Invoice added!
 }
 
 model OrderItem {
@@ -147,6 +148,33 @@ model OrderItem {
   subtotal    Float
   order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product     Product @relation(fields: [productId], references: [id])
+}
+
+model Invoice {
+  id            String    @id @default(cuid())
+  invoiceNumber String    @unique
+  orderId       String    @unique
+  userId        String
+  clientId      String?
+  status        String    @default("draft")
+  subtotal      Float
+  tax           Float?
+  shipping      Float?
+  discount      Float?
+  total         Float
+  amountPaid    Float     @default(0)
+  amountDue     Float
+  dueDate       DateTime
+  issuedAt      DateTime  @default(now())
+  sentAt        DateTime?
+  paidAt        DateTime?
+  cancelledAt   DateTime?
+  paymentLink   String?
+  notes         String?
+  billingAddress String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  order         Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
 model ProductReview {

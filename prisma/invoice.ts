@@ -1,7 +1,5 @@
 import { prisma } from "@/prisma/client";
-import type { Prisma } from "@prisma/client";
-import type { CreateInvoiceInput, UpdateInvoiceInput, InvoiceFilters } from "@/types/invoice";
-import { logger } from "@/lib/logger";
+import type { CreateInvoiceInput, InvoiceFilters } from "@/types/invoice";
 
 export async function generateInvoiceNumber(): Promise<string> {
   const now = new Date();
@@ -48,5 +46,25 @@ export async function getInvoicesByClientId(clientId: string, filters?: InvoiceF
   return prisma.invoice.findMany({
     where: { clientId },
     orderBy: { createdAt: "desc" },
+  });
+}
+
+/**
+ * RESTORED: Get invoices by order IDs
+ */
+export async function getInvoicesByOrderIds(orderIds: string[]) {
+  if (orderIds.length === 0) return [];
+  return prisma.invoice.findMany({
+    where: { orderId: { in: orderIds } },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+/**
+ * RESTORED: Get invoice by ID
+ */
+export async function getInvoiceById(invoiceId: string, userId: string) {
+  return prisma.invoice.findFirst({
+    where: { id: invoiceId, userId },
   });
 }
