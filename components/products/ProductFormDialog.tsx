@@ -208,8 +208,8 @@ export default function AddProductDialog({
   };
 
   // Determine if form is submitting based on mutation states
-  const isSubmitting =
-    createProductMutation.isPending || updateProductMutation.isPending;
+  const isSubmitting = createProductMutation.isPending || updateProductMutation.isPending;
+  const isFormValid = selectedCategory && selectedSupplier;
 
   const handleOpenChange = (open: boolean) => {
     if (open) {
@@ -348,8 +348,8 @@ export default function AddProductDialog({
               </DialogClose>
               <Button
                 type="submit"
-                className="h-11 w-full sm:w-auto px-11 inline-flex items-center justify-center rounded-xl border text-white  backdrop-blur-sm transition duration-200 dark: "
-                disabled={isSubmitting}
+                className="h-11 w-full sm:w-auto px-11 inline-flex items-center justify-center rounded-xl border text-white  backdrop-blur-sm transition duration-200 dark: disabled:opacity-50"
+                disabled={isSubmitting || !isFormValid}
               >
                 {isSubmitting
                   ? "Loading..."
